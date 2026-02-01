@@ -113,25 +113,50 @@ document.getElementById("yes").addEventListener("click", () => {
 const stack = document.getElementById("photo-stack");
 let photos = Array.from(document.querySelectorAll(".photo"));
 
-// Initialize stack with scale & vertical offset
+// Initialize stack positions
 function updateStack() {
   photos.forEach((photo, i) => {
     photo.style.zIndex = photos.length - i;
-    const scale = 1 - i * 0.05;       // smaller for layers behind
-    const translateY = i * 10;        // slight vertical offset
+    const scale = 1 - i * 0.05;
+    const translateY = i * 10;
+    photo.style.transition = "transform 0.5s";
     photo.style.transform = `translateY(${translateY}px) scale(${scale})`;
   });
 }
 updateStack();
 
-// Function to bring top photo to back
-function bringToBack() {
-  const first = photos.shift();
-  photos.push(first);
-  updateStack();
+// Swipe function: animate top photo to left, then move to back
+function swipeLeft() {
+  const top = photos[0];
+  top.style.transition = "transform 0.5s";
+  top.style.transform += " translateX(-300px) rotate(-15deg)"; // slide left with rotation
+
+  setTimeout(() => {
+    // Reset top photo
+    top.style.transition = "none";
+    top.style.transform = "translateY(0px) scale(1)";
+    
+    // Move top photo to back of array
+    photos.push(photos.shift());
+    updateStack();
+  }, 500);
 }
 
-// Touch / Mouse drag for swipe
+// Swipe function: animate top photo to right, then move to back
+function swipeRight() {
+  const top = photos[0];
+  top.style.transition = "transform 0.5s";
+  top.style.transform += " translateX(300px) rotate(15deg)"; // slide right with rotation
+
+  setTimeout(() => {
+    top.style.transition = "none";
+    top.style.transform = "translateY(0px) scale(1)";
+    photos.push(photos.shift());
+    updateStack();
+  }, 500);
+}
+
+// Detect swipe on top photo
 photos.forEach(photo => {
   let startX = 0;
   let dragging = false;
@@ -145,17 +170,14 @@ photos.forEach(photo => {
     if(!dragging) return;
     const diff = e.clientX - startX;
     dragging = false;
-    if(diff < -30 || diff > 30) {  // swipe left or right
-      bringToBack();
-    }
+    if(diff < -30) swipeLeft();
+    if(diff > 30) swipeRight();
   });
 
   photo.addEventListener("pointerleave", () => dragging = false);
 });
-
-// Update stack initially
-updateStack();
 </script>
 
 </body>
 </html>
+
