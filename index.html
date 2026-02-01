@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Be My Valentine?</title>
+
 <style>
 body {
   margin: 0;
@@ -15,15 +16,12 @@ body {
   align-items: center;
   text-align: center;
   overflow: hidden;
-  position: relative;
 }
 
 h1 {
   color: #fff;
   font-size: 3rem;
-  margin-bottom: 30px;
-  z-index: 10;
-  position: relative;
+  margin-bottom: 20px;
 }
 
 button {
@@ -34,7 +32,6 @@ button {
   border-radius: 30px;
   cursor: pointer;
   transition: 0.2s;
-  position: relative;
 }
 
 #yes {
@@ -51,7 +48,17 @@ button {
   transform: translate(-50%, -50%);
 }
 
-/* Photo stack */
+/* Love Paragraph */
+#love-text {
+  display: none;
+  max-width: 800px;
+  color: white;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin: 20px;
+}
+
+/* PHOTO STACK */
 #photo-stack {
   display: none;
   position: relative;
@@ -70,29 +77,45 @@ button {
   left: 0;
   box-shadow: 0 15px 30px rgba(0,0,0,0.3);
   cursor: grab;
-  transition: transform 0.5s, z-index 0.5s;
+  transition: transform 0.5s;
+  touch-action: pan-y;
 }
 </style>
 </head>
+
 <body>
 
-<h1>Will you be my Valentine? 💖</h1>
-<div>
+<h1>Will you be my Valentine Ishu? 💖</h1>
+
+<div id="buttons">
   <button id="yes">Yes 💘</button>
   <button id="no" onmouseover="moveNo()" ontouchstart="moveNo()">No 😅</button>
 </div>
 
-<!-- Photo Stack -->
+<!-- LOVE PARAGRAPH -->
+<p id="love-text">
+Isha, it’s almost been three beautiful years of us, and sometimes I still can’t believe how two hearts from different places found each other so perfectly. I’m from Tamil Nadu and you’re in Odisha, yet distance never stopped us from building something real, deep, and meaningful. From late-night calls that turned into early mornings, to endless conversations, laughter, misunderstandings, and learning how to choose each other every single day — our love has grown stronger with time. You’ve been my comfort on hard days, my happiness on ordinary days, and my strength when I felt weak. Even miles apart, you’ve always felt closer to me than anyone else in this world. Loving you has taught me patience, trust, and what true connection really means. I dream of a future where the distance disappears, where our memories are no longer on screens but in moments we live together. With all my heart, with every memory we’ve created, and with all the love I have for you, I want to ask you today and always… will you be my Valentine? 💖🌹
+</p>
+
+<!-- PHOTO STACK -->
 <div id="photo-stack">
-  <img src="./1757342045642-removebg-preview.png" class="photo">
-  <img src="./ChatGPT Image Sep 8, 2025, 08_40_34 PM.png" class="photo">
-  <img src="photo3.jpg" class="photo">
-  <img src="photo4.jpg" class="photo">
-  <img src="photo5.jpg" class="photo">
+  <img src="./img1.jpg" class="photo">
+  <img src="./img10.jpg" class="photo">
+  <img src="./img11.jpg" class="photo">
+  <img src="./img12.jpg" class="photo">
+  <img src="./img13.jpg" class="photo">
+  <img src="./img2.jpg" class="photo">
+  <img src="./img3.jpg" class="photo">
+  <img src="./img4.jpg" class="photo">
+  <img src="./img5.jpg" class="photo">
+  <img src="./img6.jpg" class="photo">
+  <img src="./img7.jpg" class="photo">
+  <img src="./img8.jpg" class="photo">
+
 </div>
 
 <script>
-// --- NO BUTTON ESCAPE ---
+// NO BUTTON ESCAPE
 const noBtn = document.getElementById("no");
 function moveNo() {
   const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
@@ -101,83 +124,60 @@ function moveNo() {
   noBtn.style.top = y + "px";
 }
 
-// --- YES CLICK ---
+// YES BUTTON
 document.getElementById("yes").addEventListener("click", () => {
-  document.querySelector("h1").innerHTML = "YAY!! 💕🥰<br>Best Valentine Ever 💐";
-  document.getElementById("yes").style.display = "none";
-  document.getElementById("no").style.display = "none";
+  document.querySelector("h1").innerHTML = "BABYYY!! 💕🥰<br>U Accepted ,Best Valentine Ever 💐";
+  document.getElementById("buttons").style.display = "none";
+  document.getElementById("love-text").style.display = "block";
   document.getElementById("photo-stack").style.display = "block";
 });
 
-// --- PHOTO STACK ---
-const stack = document.getElementById("photo-stack");
+// PHOTO STACK LOGIC
 let photos = Array.from(document.querySelectorAll(".photo"));
 
-// Initialize stack positions
 function updateStack() {
   photos.forEach((photo, i) => {
     photo.style.zIndex = photos.length - i;
     const scale = 1 - i * 0.05;
     const translateY = i * 10;
-    photo.style.transition = "transform 0.5s";
     photo.style.transform = `translateY(${translateY}px) scale(${scale})`;
   });
 }
 updateStack();
 
-// Swipe function: animate top photo to left, then move to back
-function swipeLeft() {
+function swipe(direction) {
   const top = photos[0];
-  top.style.transition = "transform 0.5s";
-  top.style.transform += " translateX(-300px) rotate(-15deg)"; // slide left with rotation
+  const moveX = direction === "left" ? -350 : 350;
+  const rotate = direction === "left" ? -20 : 20;
+
+  top.style.transform = `translateX(${moveX}px) rotate(${rotate}deg)`;
 
   setTimeout(() => {
-    // Reset top photo
     top.style.transition = "none";
-    top.style.transform = "translateY(0px) scale(1)";
-    
-    // Move top photo to back of array
     photos.push(photos.shift());
+    photos.forEach(photo => photo.style.transition = "transform 0.5s");
     updateStack();
   }, 500);
 }
 
-// Swipe function: animate top photo to right, then move to back
-function swipeRight() {
-  const top = photos[0];
-  top.style.transition = "transform 0.5s";
-  top.style.transform += " translateX(300px) rotate(15deg)"; // slide right with rotation
-
-  setTimeout(() => {
-    top.style.transition = "none";
-    top.style.transform = "translateY(0px) scale(1)";
-    photos.push(photos.shift());
-    updateStack();
-  }, 500);
-}
-
-// Detect swipe on top photo
+// SWIPE DETECTION
 photos.forEach(photo => {
   let startX = 0;
-  let dragging = false;
 
   photo.addEventListener("pointerdown", e => {
     startX = e.clientX;
-    dragging = true;
+    photo.setPointerCapture(e.pointerId);
   });
 
   photo.addEventListener("pointerup", e => {
-    if(!dragging) return;
     const diff = e.clientX - startX;
-    dragging = false;
-    if(diff < -30) swipeLeft();
-    if(diff > 30) swipeRight();
-  });
+    photo.releasePointerCapture(e.pointerId);
 
-  photo.addEventListener("pointerleave", () => dragging = false);
+    if (diff < -50) swipe("left");
+    else if (diff > 50) swipe("right");
+  });
 });
 </script>
 
 </body>
 </html>
-
