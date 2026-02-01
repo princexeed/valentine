@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Be My Valentine?</title>
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+}
+
+h1 {
+  color: #fff;
+  font-size: 3rem;
+  margin-bottom: 30px;
+  z-index: 10;
+  position: relative;
+}
+
+button {
+  font-size: 1.2rem;
+  padding: 12px 24px;
+  margin: 10px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.2s;
+  position: relative;
+}
+
+#yes {
+  background-color: #ff4d6d;
+  color: white;
+}
+
+#no {
+  background-color: #fff;
+  color: #ff4d6d;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Photo stack */
+#photo-stack {
+  display: none;
+  position: relative;
+  width: 260px;
+  height: 360px;
+  margin-top: 20px;
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+  cursor: grab;
+  transition: transform 0.5s, z-index 0.5s;
+}
+</style>
+</head>
+<body>
+
+<h1>Will you be my Valentine? 💖</h1>
+<div>
+  <button id="yes">Yes 💘</button>
+  <button id="no" onmouseover="moveNo()" ontouchstart="moveNo()">No 😅</button>
+</div>
+
+<!-- Photo Stack -->
+<div id="photo-stack">
+  <img src="./1757342045642-removebg-preview.png" class="photo">
+  <img src="./ChatGPT Image Sep 8, 2025, 08_40_34 PM.png" class="photo">
+  <img src="photo3.jpg" class="photo">
+  <img src="photo4.jpg" class="photo">
+  <img src="photo5.jpg" class="photo">
+</div>
+
+<script>
+// --- NO BUTTON ESCAPE ---
+const noBtn = document.getElementById("no");
+function moveNo() {
+  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
+
+// --- YES CLICK ---
+document.getElementById("yes").addEventListener("click", () => {
+  document.querySelector("h1").innerHTML = "YAY!! 💕🥰<br>Best Valentine Ever 💐";
+  document.getElementById("yes").style.display = "none";
+  document.getElementById("no").style.display = "none";
+  document.getElementById("photo-stack").style.display = "block";
+});
+
+// --- PHOTO STACK ---
+const stack = document.getElementById("photo-stack");
+let photos = Array.from(document.querySelectorAll(".photo"));
+
+// Initialize stack with scale & vertical offset
+function updateStack() {
+  photos.forEach((photo, i) => {
+    photo.style.zIndex = photos.length - i;
+    const scale = 1 - i * 0.05;       // smaller for layers behind
+    const translateY = i * 10;        // slight vertical offset
+    photo.style.transform = `translateY(${translateY}px) scale(${scale})`;
+  });
+}
+updateStack();
+
+// Function to bring top photo to back
+function bringToBack() {
+  const first = photos.shift();
+  photos.push(first);
+  updateStack();
+}
+
+// Touch / Mouse drag for swipe
+photos.forEach(photo => {
+  let startX = 0;
+  let dragging = false;
+
+  photo.addEventListener("pointerdown", e => {
+    startX = e.clientX;
+    dragging = true;
+  });
+
+  photo.addEventListener("pointerup", e => {
+    if(!dragging) return;
+    const diff = e.clientX - startX;
+    dragging = false;
+    if(diff < -30 || diff > 30) {  // swipe left or right
+      bringToBack();
+    }
+  });
+
+  photo.addEventListener("pointerleave", () => dragging = false);
+});
+
+// Update stack initially
+updateStack();
+</script>
+
+</body>
+</html>
